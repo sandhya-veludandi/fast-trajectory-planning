@@ -1,8 +1,5 @@
 import random
-# Python 3 program of the above approach
-ROW = 101
-COL = 101
- 
+
 # Initialize direction vectors
 dRow = [0, 1, 0, -1]
 dCol = [-1, 0, 1, 0]
@@ -15,12 +12,10 @@ grid = [[1 for i in range(cols)] for j in range(rows)] #iterates all as open
 # is unvisited and lies within the
 # boundary of the given matrix
 def isValid(row, col):
-    global ROW
-    global COL
     global vis
      
     # If cell is out of bounds
-    if (row < 0 or col < 0 or row >= ROW or col >= COL):
+    if (row < 0 or col < 0 or row >= 101 or col >= 101):
         return False
  
     # If the cell is already visited
@@ -74,6 +69,102 @@ def DFS(row, col, grid):
             adjx = row + dRow[i]
             adjy = col + dCol[i]
             st.append([adjx, adjy])
+
+class Node:
+    # Initialize the class
+    def __init__(self, position, parent):
+        self.position = position
+        self.parent = parent
+        self.g = 0 # Distance to start node
+        self.h = 0 # Distance to goal node
+        self.f = 0 # Total cost
+    # Compare nodes
+    def __eq__(self, other):
+        return self.position == other.position
+    # Sort nodes
+    def __lt__(self, other):
+         return self.f < other.f
+    # Print node
+    def __repr__(self):
+        return ('({0},{1})'.format(self.position, self.f))
+# Draw a grid
+def draw_grid(map, width, height, spacing=2, **kwargs):
+    for y in range(height):
+        for x in range(width):
+            print('-' + draw_tile(map, (x, y), kwargs), end='')
+        print()
+# Draw a tile
+def draw_tile(map, position, kwargs):
+    
+    # Get the map value
+    
+    value = map[position]
+    # Check if we should print the path
+    if 'path' in kwargs and position in kwargs['path']: value = 'P'
+    # Check if we should print start point
+    if 'start' in kwargs and position == kwargs['start']: value = '@ '
+    # Check if we should print the goal point
+    if 'goal' in kwargs and position == kwargs['goal']: value = '$'
+    # Return a tile value
+    return value 
+
+def asearch(grid, start, end):
+    open = []
+    closed = []
+
+    start_node = Node(start, None)
+    goal_node = Node(end, None)
+
+    open.append(start_node)
+
+    while len(open) > 0:
+        open.sort() #get lowest cost
+        current_node = open.pop(0)
+        closed.append(current_node)
+
+        if current_node == goal_node:
+            path = []
+            while current_node != start_node:
+                path.append(current_node.position)
+                current_node = current_node.parent
+            # Return reversed path
+            return path[::-1]
+        
+        (x, y) = current_node.position
+        # Get neighbors
+        neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+
+        for next in neighbors:
+            if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
+                map_value = grid[next[0]][next[1]]
+            else:
+                continue
+            # Get value from map
+            #map_value = grid[next[0]][next[1]]
+            # Check if the node is a wall
+            if(map_value == 1):
+                continue
+            # Create a neighbor node
+            neighbor = Node(next, current_node)
+            # Check if the neighbor is in the closed list
+            if(neighbor in closed):
+                continue
+            # Generate heuristics (Manhattan distance)
+            neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
+            neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
+            neighbor.f = neighbor.g + neighbor.h
+            # Check if neighbor is in open list and if it has a lower f value
+            if(add_to_open(open, neighbor) == True):
+                # Everything is green, add neighbor to open list
+                open.append(neighbor)    
+    
+    return "I cannot reach the target"
+
+def add_to_open(open, neighbor):
+    for node in open:
+        if (neighbor == node and neighbor.f >= node.f):
+            return False
+    return True
  
 # Driver Code
 if __name__ == '__main__':
@@ -81,7 +172,16 @@ if __name__ == '__main__':
     DFS(0, 0, grid)
     grid[0][0] = 0
     grid[100][100] = 0
-     
+
+    start = (0,0)
+    end = (100,100)
+
+    path = asearch(grid, start, end)
+
+    print(path)
+    #draw_grid(map, 101, 101, spacing=1, path=path, start=start, goal=end)
+    print('Steps to goal: {0}'.format(len(path)))
+
     for i in range(101):
         for j in range(101):
             if grid[i][j] == 1: #if it's closed
@@ -89,3 +189,4 @@ if __name__ == '__main__':
             else: 
                 print("_",end=" ")
         print()
+
