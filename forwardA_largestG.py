@@ -1,6 +1,6 @@
 import random
 import pygame
-import numpy as np
+#import numpy as np
 
 #proportions of pygame screen on computer in pixels
 WIDTH, HEIGHT = 515, 515
@@ -156,23 +156,33 @@ class Node:
         return ('({0},{1})'.format(self.position, self.f))
 
 # a star forward
-def asearch(grid, start, end):
-    closed = []
+def asearch(grid, start, end, close):
+    closed = close
 
     open = heap()
 
     start_node = Node(start, None)
     goal_node = Node(end, None)
 
+    print(start_node)
+
+    if(start_node == goal_node):
+        return
+
     open.insert(start_node)
 
     while open.currentSize > 0:
-        open.buildHeap(open.heapList)
+        # open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
             # print(current_node.h)
             # print(current_node)
+        # if(open.currentSize > 0):
+        #     next_node = open.delMin()
+        #     if(next_node.g < current_node.g): # checks if our g value is greater
+        #         current_node = next_node
+
         closed.append(current_node)
 
         if current_node == goal_node:
@@ -197,6 +207,8 @@ def asearch(grid, start, end):
             # Check if the node is a wall
             if(map_value == 1):
                 continue
+            # Colors neighbors gray to represent that we've expanded it
+            # grid[next[0]][next[1]] = 5
             # Create a neighbor node
             neighbor = Node(next, current_node)
             # Check if the neighbor is in the closed list
@@ -209,13 +221,12 @@ def asearch(grid, start, end):
             # Check if neighbor is in open list and if it has a lower f value
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
-                open.insert(neighbor)    
-    
-    return "I cannot reach the target"
+                open.insert(neighbor) 
+    return []
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.g >= node.g):
+        if (neighbor == node and neighbor.f <= node.f):
             return False
     return True
  
@@ -232,7 +243,7 @@ def drawGrid():
     RED = (255,99,71) # grid == 3
     GRAY = (211,211,211) # for background
     BLUE = (153,255,255) # grid[x][y] == 4, where current position is
-    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE]
+    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE, GRAY]
 
     # set the height/width of each location on the grid
     height = 4
@@ -245,9 +256,10 @@ def drawGrid():
 
     start = (0,0)
     end = (100,100)
+    close = []
 
     # forward a*
-    path = asearch(grid, start, end)
+    path = asearch(grid, start, end, close)
     # backwards a*
     # path = asearch(grid, end, start)
 

@@ -1,6 +1,6 @@
 import random
 import pygame
-import numpy as np
+#import numpy as np
 
 #proportions of pygame screen on computer in pixels
 WIDTH, HEIGHT = 515, 515
@@ -171,8 +171,6 @@ def asearch(grid, start, end):
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
-            # print(current_node.h)
-            # print(current_node)
         closed.append(current_node)
 
         if current_node == goal_node:
@@ -206,12 +204,12 @@ def asearch(grid, start, end):
             neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
             neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.f = neighbor.g + neighbor.h
-            # Check if neighbor is in open list and if it has a lower f value
+            # Check if neighbor is in open list and if it has a larger g value
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor)    
     
-    return "I cannot reach the target"
+    return []
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
@@ -250,6 +248,7 @@ def drawGrid():
     path = asearch(grid, start, end)
     # backwards a*
     # path = asearch(grid, end, start)
+    goal = Node(end, None)
 
     print('Steps to goal: {0}'.format(len(path)))
 

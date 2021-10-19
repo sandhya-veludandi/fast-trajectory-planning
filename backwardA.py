@@ -1,6 +1,6 @@
 import random
 import pygame
-import numpy as np
+#import numpy as np
 
 #proportions of pygame screen on computer in pixels
 WIDTH, HEIGHT = 515, 515
@@ -211,7 +211,7 @@ def asearch(grid, start, end):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor)    
     
-    return "I cannot reach the target"
+    return []
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
