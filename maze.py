@@ -246,7 +246,10 @@ def drawGrid():
     start = (0,0)
     end = (100,100)
 
-    path = asearch(grid, start, end)
+    # forward a*
+    # path = asearch(grid, start, end)
+    # backwards a*
+    path = asearch(grid, end, start)
 
     grid[0][0] = 2
     grid[100][100] = 3
