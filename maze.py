@@ -202,7 +202,7 @@ def asearch(grid, start, end):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor)    
     
-    return "I cannot reach the target"
+    return []
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
@@ -240,7 +240,7 @@ def drawGrid():
     grid[0][0] = 2
     grid[100][100] = 3
 
-    #print(path)
+    print(path)
     #draw_grid(map, 101, 101, spacing=1, path=path, start=start, goal=end)
     #print('Steps to goal: {0}'.format(len(path)))
 
@@ -261,5 +261,7 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        drawGrid()
+        result = drawGrid()
+        if(result == "I cannot reach the target"): 
+            print("stopping")
 
