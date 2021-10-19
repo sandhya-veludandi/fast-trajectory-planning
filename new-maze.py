@@ -1,5 +1,5 @@
-import pygame
 import random
+import pygame
 import numpy as np
 
 #proportions of pygame screen on computer in pixels
@@ -7,27 +7,263 @@ WIDTH, HEIGHT = 505, 505
 CELL_SIZE = 5
 ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
 
-# grid RGB colors & meanings
-BLACK = (0, 0, 0) # grid == 0
-WHITE = (255, 255, 255) # grid == 1
-GREEN = (50,205,50) # grid == 2
-RED = (255,99,71) # grid == 3
-GRAY = (211,211,211) # for background
-BLUE = (153,255,255) # grid[x][y] == 4, where current position is
-
-#Defining ONE grid (put inside for loop later)
-grid = np.zeros((ROWS, COLUMNS))
-
-#green is 2 (start)
-grid[0, 0] = 2
-#red is 3 (end)
-grid[-1, -1] = 3
-
 #Initializing pygame screen
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Maze Generator")
 CLOCK = pygame.time.Clock()
-FPS = 30
+FPS = 10
 
+# Initialize direction vectors
+dRow = [0, 1, 0, -1]
+dCol = [-1, 0, 1, 0]
+vis = [[False for i in range(11)] for j in range(11)]
+cols = 11
+rows = 11
+grid = [[1 for i in range(cols)] for j in range(rows)] #iterates all as open
+
+# Function to check if mat[row][col] is unvisited and lies within the boundary of the given matrix
+def isValid(row, col):
+    global vis
+     
+    # If cell is out of bounds
+    if (row < 0 or col < 0 or row >= 11 or col >= 11):
+        return False
+ 
+    # If the cell is already visited
+    if (vis[row][col]):
+        return False
+ 
+    # Otherwise, it can be visited
+    return True
+ 
+# Function to perform DFS
+# Traversal on the matrix grid[]
+def DFS(row, col, grid):
+    global dRow
+    global dCol
+    global vis
+     
+    # Initialize a stack of pairs and push the starting cell into it
+    st = []
+    st.append([row, col])
+ 
+    # Iterate until the stack is not empty
+    while (len(st) > 0):
+        # Pop the top pair
+        curr = st[len(st) - 1]
+        st.remove(st[len(st) - 1])
+        row = curr[0]
+        col = curr[1]
+ 
+        # Check if the current popped cell is a valid cell or not
+        if (isValid(row, col) == False):
+            continue
+ 
+        # Mark the current cell as visited
+        vis[row][col] = True
+ 
+        # Print the element at the current top cell
+        # Check probability
+        rand = random.random()
+
+        # if < 0.3 then close the site
+        if(rand >= 0.3):
+            grid[row][col] = 0
+ 
+        # Push all the adjacent cells
+        for i in range(4):
+            adjx = row + dRow[i]
+            adjy = col + dCol[i]
+            st.append([adjx, adjy])
+
+class heap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+    
+    def percUp(self,i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self,k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+    
+    def percDown(self,i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self,i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i*2] < self.heapList[i*2+1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+    
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self,alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            self.percDown(i)
+            i = i - 1
+
+class Node:
+    # Initialize the class
+    def __init__(self, position, parent):
+        self.position = position
+        self.parent = parent
+        self.g = 0 # Distance to start node
+        self.h = 0 # Distance to goal node
+        self.f = 0 # Total cost
+    # Compare nodes
+    def __eq__(self, other):
+        if(isinstance(other, int)):
+            return False
+        return self.position == other.position
+    # Sort nodes
+    def __lt__(self, other):
+         return self.f < other.f
+    # Print node
+    def __repr__(self):
+        return ('({0},{1})'.format(self.position, self.f))
+
+# a star forward
+def asearch(grid, start, end):
+    closed = []
+
+    open = heap()
+
+    start_node = Node(start, None)
+    goal_node = Node(end, None)
+
+    open.insert(start_node)
+    # print(open.heapList[1])
+
+    while open.currentSize > 0:
+        current_node = open.delMin() #gets the minimum and deletes it from the heap
+        closed.append(current_node)
+
+        if current_node == goal_node:
+            path = []
+            while current_node != start_node:
+                path.append(current_node.position)
+                grid[current_node.position[0]][current_node.position[1]] = 4
+                current_node = current_node.parent
+            # Return reversed path
+            return path[::-1]
+        
+        (x, y) = current_node.position
+        # Get neighbors
+        neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+
+        for next in neighbors:
+            if((0 <= next[0] < 11) & (0 <= next[1] < 11)):
+                map_value = grid[next[0]][next[1]]
+            else:
+                continue
+            # Get value from map
+            #map_value = grid[next[0]][next[1]]
+            # Check if the node is a wall
+            if(map_value == 1):
+                continue
+            # Create a neighbor node
+            neighbor = Node(next, current_node)
+            # Check if the neighbor is in the closed list
+            if(neighbor in closed):
+                continue
+            # Generate heuristics (Manhattan distance)
+            neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
+            neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
+            neighbor.f = neighbor.g + neighbor.h
+            # Check if neighbor is in open list and if it has a lower f value
+            if(add_to_open(open, neighbor) == True):
+                # Everything is green, add neighbor to open list
+                open.insert(neighbor)    
+    
+    return []
+
+def add_to_open(open, neighbor):
+    for node in open.heapList:
+        if (neighbor == node and neighbor.f >= node.f):
+            return False
+    return True
+ 
+def drawGrid():
+    # Function call
+    DFS(0, 0, grid)
+    grid[0][0] = 0
+    grid[10][10] = 0
+
+# grid RGB colors & meanings
+    WHITE = (255, 255, 255) # grid == 1
+    BLACK = (0, 0, 0) # grid == 0
+    GREEN = (50,205,50) # grid == 2
+    RED = (255,99,71) # grid == 3
+    GRAY = (211,211,211) # for background
+    BLUE = (153,255,255) # grid[x][y] == 4, where current position is
+    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE]
+
+    # set the height/width of each location on the grid
+    height = 4
+    width = height # i want the grid square
+    margin = 1 # sets margin between grid locations
+
+    SCREEN.fill(GRAY) # fill background in grey
+
+    start = (0,0)
+    end = (10,10)
+
+    path = asearch(grid, start, end)
+
+    grid[0][0] = 2
+    grid[10][10] = 3
+
+    print(path)
+    #draw_grid(map, 11, 11, spacing=1, path=path, start=start, goal=end)
+    #print('Steps to goal: {0}'.format(len(path)))
+
+    for i in range(11):
+        for j in range(11):
+            print(grid[i][j], end="")
+            COLOR = idx_to_color[grid[i][j]]
+            pygame.draw.rect(SCREEN, COLOR, 
+                [(margin + width) * j + margin, 
+                (margin + height) * i + margin,
+                width, height])
+        print()
+    # update screen
+    pygame.display.update()
+
+if __name__ == '__main__':
+    running = True
+    while running:
+        CLOCK.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        result = drawGrid()
+        if(result == "I cannot reach the target"): 
+            print("stopping")
 
