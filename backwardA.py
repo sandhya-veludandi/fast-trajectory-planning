@@ -102,7 +102,7 @@ class heap:
                 i = mc
                 continue
             mc = self.minChild(i)
-            if self.heapList[i].h > self.heapList[mc].h:
+            if self.heapList[i].g > self.heapList[mc].g:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -112,7 +112,7 @@ class heap:
         if i * 2 + 1 > self.currentSize:
             return i * 2
         else:
-            if self.heapList[i*2] < self.heapList[i*2+1]:
+            if self.heapList[i*2].h < self.heapList[i*2+1].h:
                 return i * 2
             else:
                 return i * 2 + 1
@@ -211,7 +211,7 @@ def asearch(grid, start, end):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor)    
     
-    return []
+    return "I cannot reach the target"
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
@@ -246,8 +246,6 @@ def drawGrid():
     start = (0,0)
     end = (100,100)
 
-    # forward a*
-    # path = asearch(grid, start, end)
     # backwards a*
     path = asearch(grid, end, start)
 
