@@ -102,7 +102,7 @@ class heap:
                 i = mc
                 continue
             mc = self.minChild(i)
-            if self.heapList[i].g < self.heapList[mc].g:
+            if self.heapList[i].g > self.heapList[mc].g:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -215,7 +215,7 @@ def asearch(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f >= node.f):
+        if (neighbor == node and neighbor.g <= node.g):
             return False
     return True
  
@@ -250,6 +250,8 @@ def drawGrid():
     path = asearch(grid, start, end)
     # backwards a*
     # path = asearch(grid, end, start)
+
+    print('Steps to goal: {0}'.format(len(path)))
 
     grid[0][0] = 2
     grid[100][100] = 3
