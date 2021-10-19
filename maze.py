@@ -77,6 +77,58 @@ def DFS(row, col, grid):
             adjy = col + dCol[i]
             st.append([adjx, adjy])
 
+class heap:
+    def __init__(self):
+        self.heapList = [0]
+        self.currentSize = 0
+    
+    def percUp(self,i):
+        while i // 2 > 0:
+            if self.heapList[i] < self.heapList[i // 2]:
+                tmp = self.heapList[i // 2]
+                self.heapList[i // 2] = self.heapList[i]
+                self.heapList[i] = tmp
+            i = i // 2
+
+    def insert(self,k):
+        self.heapList.append(k)
+        self.currentSize = self.currentSize + 1
+        self.percUp(self.currentSize)
+    
+    def percDown(self,i):
+        while (i * 2) <= self.currentSize:
+            mc = self.minChild(i)
+            if self.heapList[i] > self.heapList[mc]:
+                tmp = self.heapList[i]
+                self.heapList[i] = self.heapList[mc]
+                self.heapList[mc] = tmp
+            i = mc
+
+    def minChild(self,i):
+        if i * 2 + 1 > self.currentSize:
+            return i * 2
+        else:
+            if self.heapList[i*2] < self.heapList[i*2+1]:
+                return i * 2
+            else:
+                return i * 2 + 1
+    
+    def delMin(self):
+        retval = self.heapList[1]
+        self.heapList[1] = self.heapList[self.currentSize]
+        self.currentSize = self.currentSize - 1
+        self.heapList.pop()
+        self.percDown(1)
+        return retval
+
+    def buildHeap(self,alist):
+        i = len(alist) // 2
+        self.currentSize = len(alist)
+        self.heapList = [0] + alist[:]
+        while (i > 0):
+            self.percDown(i)
+            i = i - 1
+
 class Node:
     # Initialize the class
     def __init__(self, position, parent):
@@ -87,6 +139,8 @@ class Node:
         self.f = 0 # Total cost
     # Compare nodes
     def __eq__(self, other):
+        if(isinstance(other, int)):
+            return False
         return self.position == other.position
     # Sort nodes
     def __lt__(self, other):
@@ -95,40 +149,20 @@ class Node:
     def __repr__(self):
         return ('({0},{1})'.format(self.position, self.f))
 
-# Draw a grid
-def draw_grid(map, width, height, spacing=2, **kwargs):
-    for y in range(height):
-        for x in range(width):
-            print('-' + draw_tile(map, (x, y), kwargs), end='')
-        print()
-# Draw a tile
-def draw_tile(map, position, kwargs):
-    
-    # Get the map value
-    value = map[position]
-    # Check if we should print the path
-    if 'path' in kwargs and position in kwargs['path']: value = 'P'
-    # Check if we should print start point
-    if 'start' in kwargs and position == kwargs['start']: value = '@ '
-    # Check if we should print the goal point
-    if 'goal' in kwargs and position == kwargs['goal']: value = '$'
-    # Return a tile value
-    return value 
-
-# a star
+# a star forward
 def asearch(grid, start, end):
-    open = []
     closed = []
+
+    open = heap()
 
     start_node = Node(start, None)
     goal_node = Node(end, None)
 
-    open.append(start_node)
+    open.insert(start_node)
+    # print(open.heapList[1])
 
-    while len(open) > 0:
-        open.sort() #get lowest cost
-        current_node = open.pop(0)
-        print(current_node)
+    while open.currentSize > 0:
+        current_node = open.delMin() #gets the minimum and deletes it from the heap
         closed.append(current_node)
 
         if current_node == goal_node:
@@ -166,12 +200,12 @@ def asearch(grid, start, end):
             # Check if neighbor is in open list and if it has a lower f value
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
-                open.append(neighbor)    
+                open.insert(neighbor)    
     
     return "I cannot reach the target"
 
 def add_to_open(open, neighbor):
-    for node in open:
+    for node in open.heapList:
         if (neighbor == node and neighbor.f >= node.f):
             return False
     return True
@@ -203,13 +237,12 @@ def drawGrid():
 
     path = asearch(grid, start, end)
 
-    # mark start and ending positions in green and red
     grid[0][0] = 2
     grid[100][100] = 3
 
-    # print(path)
+    #print(path)
     #draw_grid(map, 101, 101, spacing=1, path=path, start=start, goal=end)
-    # print('Steps to goal: {0}'.format(len(path)))
+    #print('Steps to goal: {0}'.format(len(path)))
 
     for i in range(101):
         for j in range(101):
