@@ -1,4 +1,18 @@
 import random
+import pygame
+import numpy as np
+
+#proportions of pygame screen on computer in pixels
+WIDTH, HEIGHT = 505, 505
+CELL_SIZE = 5
+ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
+
+ #Initializing pygame screen
+pygame.init()
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Maze Generator")
+CLOCK = pygame.time.Clock()
+FPS = 30
 
 # Initialize direction vectors
 dRow = [0, 1, 0, -1]
@@ -108,6 +122,7 @@ def draw_tile(map, position, kwargs):
     # Return a tile value
     return value 
 
+# a star
 def asearch(grid, start, end):
     open = []
     closed = []
@@ -166,12 +181,30 @@ def add_to_open(open, neighbor):
             return False
     return True
  
-# Driver Code
-if __name__ == '__main__':
+def drawGrid():
     # Function call
     DFS(0, 0, grid)
     grid[0][0] = 0
     grid[100][100] = 0
+
+     # grid RGB colors & meanings
+    WHITE = (255, 255, 255) # grid == 1
+    BLACK = (0, 0, 0) # grid == 0
+    GREEN = (50,205,50) # grid == 2
+    RED = (255,99,71) # grid == 3
+    GRAY = (211,211,211) # for background
+    BLUE = (153,255,255) # grid[x][y] == 4, where current position is
+    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE]
+
+    # set the height/width of each location on the grid
+    height = 4
+    width = height # i want the grid square
+    margin = 1 # sets margin between grid locations
+
+    grid[0][0] = 2
+    grid[100][100] = 3
+
+    SCREEN.fill(GRAY) # fill background in grey
 
     start = (0,0)
     end = (100,100)
@@ -184,9 +217,20 @@ if __name__ == '__main__':
 
     for i in range(101):
         for j in range(101):
-            if grid[i][j] == 1: #if it's closed
-                print("X",end=" ")
-            else: 
-                print("_",end=" ")
-        print()
+            COLOR = idx_to_color[grid[i][j]]
+            pygame.draw.rect(SCREEN, COLOR, 
+                [(margin + width) * j + margin, 
+                (margin + height) * i + margin,
+                width, height])
+    # update screen
+    pygame.display.update()
+
+if __name__ == '__main__':
+    running = True
+    while running:
+        CLOCK.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        drawGrid()
 
