@@ -84,7 +84,7 @@ class heap:
     
     def percUp(self,i):
         while i // 2 > 0:
-            if self.heapList[i].g < self.heapList[i // 2].g:
+            if self.heapList[i].h < self.heapList[i // 2].h:
                 tmp = self.heapList[i // 2]
                 self.heapList[i // 2] = self.heapList[i]
                 self.heapList[i] = tmp
@@ -102,7 +102,7 @@ class heap:
                 i = mc
                 continue
             mc = self.minChild(i)
-            if self.heapList[i].g > self.heapList[mc].g:
+            if self.heapList[i].h > self.heapList[mc].h:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -112,7 +112,7 @@ class heap:
         if i * 2 + 1 > self.currentSize:
             return i * 2
         else:
-            if self.heapList[i*2].g < self.heapList[i*2+1].g:
+            if self.heapList[i*2].h < self.heapList[i*2+1].h:
                 return i * 2
             else:
                 return i * 2 + 1
@@ -156,15 +156,15 @@ class Node:
         return ('({0},{1})'.format(self.position, self.f))
 
 # a star forward
-def asearch(grid, start, end, close):
-    closed = close
+def asearch(grid, start, end, close, opened):
+    closed = []
 
     open = heap()
 
     start_node = Node(start, None)
     goal_node = Node(end, None)
 
-    print(start_node)
+    # print(start_node)
 
     if(start_node == goal_node):
         return
@@ -196,10 +196,12 @@ def asearch(grid, start, end, close):
         
         (x, y) = current_node.position
         # Get neighbors
-        neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+        neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1)]
 
         for next in neighbors:
             if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
+                # print("next")
+                # print(next)
                 map_value = grid[next[0]][next[1]]
             else:
                 continue
@@ -208,7 +210,7 @@ def asearch(grid, start, end, close):
             if(map_value == 1):
                 continue
             # Colors neighbors gray to represent that we've expanded it
-            # grid[next[0]][next[1]] = 5
+            grid[next[0]][next[1]] = 5
             # Create a neighbor node
             neighbor = Node(next, current_node)
             # Check if the neighbor is in the closed list
@@ -222,11 +224,16 @@ def asearch(grid, start, end, close):
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor) 
+                # return asearch(grid, current_node.position, end, closed, open)
+    # if(current_node == start_node):
+    #     return []
+    # print(closed)
+    # return asearch(grid, current_node.position, end, closed)
     return []
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f <= node.f):
+        if (neighbor == node and neighbor.g >= node.g):
             return False
     return True
  
@@ -257,9 +264,10 @@ def drawGrid():
     start = (0,0)
     end = (100,100)
     close = []
+    open = heap()
 
     # forward a*
-    path = asearch(grid, start, end, close)
+    path = asearch(grid, start, end, close, open)
     # backwards a*
     # path = asearch(grid, end, start)
 
