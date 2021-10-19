@@ -112,7 +112,7 @@ class heap:
         if i * 2 + 1 > self.currentSize:
             return i * 2
         else:
-            if self.heapList[i*2].h < self.heapList[i*2+1].h:
+            if self.heapList[i*2].g < self.heapList[i*2+1].g:
                 return i * 2
             else:
                 return i * 2 + 1
@@ -215,7 +215,7 @@ def asearch(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f >= node.f):
+        if (neighbor == node and neighbor.g >= node.g):
             return False
     return True
  
@@ -248,6 +248,8 @@ def drawGrid():
 
     # backwards a*
     path = asearch(grid, end, start)
+
+    print('Steps to goal: {0}'.format(len(path)))
 
     grid[0][0] = 2
     grid[100][100] = 3

@@ -84,7 +84,7 @@ class heap:
     
     def percUp(self,i):
         while i // 2 > 0:
-            if self.heapList[i].h < self.heapList[i // 2].h:
+            if self.heapList[i].g < self.heapList[i // 2].g:
                 tmp = self.heapList[i // 2]
                 self.heapList[i // 2] = self.heapList[i]
                 self.heapList[i] = tmp
@@ -102,7 +102,7 @@ class heap:
                 i = mc
                 continue
             mc = self.minChild(i)
-            if self.heapList[i].h > self.heapList[mc].h:
+            if self.heapList[i].g > self.heapList[mc].g:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -112,7 +112,7 @@ class heap:
         if i * 2 + 1 > self.currentSize:
             return i * 2
         else:
-            if self.heapList[i*2] < self.heapList[i*2+1]:
+            if self.heapList[i*2].g < self.heapList[i*2+1].g:
                 return i * 2
             else:
                 return i * 2 + 1
@@ -138,8 +138,8 @@ class Node:
     def __init__(self, position, parent):
         self.position = position
         self.parent = parent
-        self.g = 0 # Distance to start node
-        self.h = 0 # Distance to goal node
+        self.g = 0 # Goal distance of state s
+        self.h = 0 # Goal s - state s
         self.f = 0 # Total cost
     # Compare nodes
     def __eq__(self, other):
@@ -202,9 +202,10 @@ def asearch(grid, start, end):
             # Check if the neighbor is in the closed list
             if(neighbor in closed):
                 continue
-            # Generate heuristics (Manhattan distance)
-            neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
-            neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
+            g =  abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
+            h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
+            neighbor.g = (abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1]))
+            neighbor.h = (g+h) - (abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1]))
             neighbor.f = neighbor.g + neighbor.h
             # Check if neighbor is in open list and if it has a lower f value
             if(add_to_open(open, neighbor) == True):
@@ -215,7 +216,7 @@ def asearch(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f >= node.f):
+        if (neighbor == node and neighbor.f <= node.f):
             return False
     return True
  
@@ -225,7 +226,7 @@ def drawGrid():
     grid[0][0] = 0
     grid[100][100] = 0
 
-# grid RGB colors & meanings
+    # grid RGB colors & meanings
     WHITE = (255, 255, 255) # grid == 1
     BLACK = (0, 0, 0) # grid == 0
     GREEN = (50,205,50) # grid == 2
@@ -246,10 +247,10 @@ def drawGrid():
     start = (0,0)
     end = (100,100)
 
-    # forward a*
-    # path = asearch(grid, start, end)
-    # backwards a*
-    path = asearch(grid, end, start)
+    # adaptive a*
+    path = asearch(grid, start, end)
+
+    print('Steps to goal: {0}'.format(len(path)))
 
     grid[0][0] = 2
     grid[100][100] = 3
