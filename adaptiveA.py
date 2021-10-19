@@ -197,15 +197,17 @@ def asearch(grid, start, end):
             # Check if the node is a wall
             if(map_value == 1):
                 continue
+
+            grid[next[0]][next[1]] = 5
             # Create a neighbor node
             neighbor = Node(next, current_node)
             # Check if the neighbor is in the closed list
             if(neighbor in closed):
                 continue
-            g =  abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
-            h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
-            neighbor.g = (abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1]))
-            neighbor.h = (g+h) - (abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1]))
+            goal =  goal_node.position[0] + goal_node.position[1]
+            # h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
+            neighbor.g = (abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1]))
+            neighbor.h = goal - (abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1]))
             neighbor.f = neighbor.g + neighbor.h
             # Check if neighbor is in open list and if it has a lower f value
             if(add_to_open(open, neighbor) == True):
@@ -216,7 +218,7 @@ def asearch(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.h <= node.g):
+        if (neighbor == node and neighbor.f >= node.f):
             return False
     return True
  
@@ -233,7 +235,7 @@ def drawGrid():
     RED = (255,99,71) # grid == 3
     GRAY = (211,211,211) # for background
     BLUE = (153,255,255) # grid[x][y] == 4, where current position is
-    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE]
+    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE, GRAY]
 
     # set the height/width of each location on the grid
     height = 4
