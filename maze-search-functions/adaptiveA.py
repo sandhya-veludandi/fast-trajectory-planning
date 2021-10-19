@@ -156,7 +156,7 @@ class Node:
         return ('({0},{1})'.format(self.position, self.f))
 
 # a star forward
-def asearch(grid, start, end):
+def adaptiveA(grid, start, end):
     closed = []
 
     open = heap()
@@ -250,7 +250,7 @@ def drawGrid():
     end = (100,100)
 
     # adaptive a*
-    path = asearch(grid, start, end)
+    path = adaptiveA(grid, start, end)
 
     print('Steps to goal: {0}'.format(len(path)))
 

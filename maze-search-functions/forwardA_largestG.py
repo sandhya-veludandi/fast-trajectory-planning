@@ -155,8 +155,8 @@ class Node:
     def __repr__(self):
         return ('({0},{1})'.format(self.position, self.f))
 
-# a star forward
-def asearch(grid, start, end, close, opened):
+# forwardA_lagestG
+def forwardA_largestG(grid, start, end, close, opened):
     closed = []
 
     open = heap()
@@ -224,11 +224,11 @@ def asearch(grid, start, end, close, opened):
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor) 
-                # return asearch(grid, current_node.position, end, closed, open)
+                # return forwardA_largestG(grid, current_node.position, end, closed, open)
     # if(current_node == start_node):
     #     return []
     # print(closed)
-    # return asearch(grid, current_node.position, end, closed)
+    # return forwardA_largestG(grid, current_node.position, end, closed)
     return []
 
 def add_to_open(open, neighbor):
@@ -267,9 +267,9 @@ def drawGrid():
     open = heap()
 
     # forward a*
-    path = asearch(grid, start, end, close, open)
+    path = forwardA_largestG(grid, start, end, close, open)
     # backwards a*
-    # path = asearch(grid, end, start)
+    # path = forwardA_largestG(grid, end, start)
 
     print('Steps to goal: {0}'.format(len(path)))
 

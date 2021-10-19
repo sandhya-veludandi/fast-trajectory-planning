@@ -2,13 +2,12 @@ import sys
 import random
 from pathlib import Path
 import pygame
-import numpy as np
+
 #proportions of pygame screen on computer in pixels
 WIDTH, HEIGHT = 505, 505
 CELL_SIZE = 5
 ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
 
- #Initializing pygame screen
 #Initializing pygame screen
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -252,7 +251,7 @@ if __name__ == '__main__':
             drawGridYet = True
             
     #if random or testcase grid run create_grid_solution 
-    if not(drawGridYet):create_grid_solution(grid_arg)
+    if not(drawGridYet): create_grid_solution(grid_arg)
  
     running = True
     while running:

@@ -112,7 +112,7 @@ class heap:
         if i * 2 + 1 > self.currentSize:
             return i * 2
         else:
-            if self.heapList[i*2].h < self.heapList[i*2+1].h:
+            if self.heapList[i*2].g < self.heapList[i*2+1].g:
                 return i * 2
             else:
                 return i * 2 + 1
@@ -155,8 +155,8 @@ class Node:
     def __repr__(self):
         return ('({0},{1})'.format(self.position, self.f))
 
-# a star forward
-def asearch(grid, start, end):
+# backwardA
+def backwardA(grid, start, end):
     closed = []
 
     open = heap()
@@ -171,6 +171,8 @@ def asearch(grid, start, end):
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
+            # print(current_node.h)
+            # print(current_node)
         closed.append(current_node)
 
         if current_node == goal_node:
@@ -204,7 +206,7 @@ def asearch(grid, start, end):
             neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
             neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.f = neighbor.g + neighbor.h
-            # Check if neighbor is in open list and if it has a larger g value
+            # Check if neighbor is in open list and if it has a lower f value
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor)    
@@ -213,7 +215,7 @@ def asearch(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.g <= node.g):
+        if (neighbor == node and neighbor.g >= node.g):
             return False
     return True
  
@@ -244,11 +246,8 @@ def drawGrid():
     start = (0,0)
     end = (100,100)
 
-    # forward a*
-    path = asearch(grid, start, end)
     # backwards a*
-    # path = asearch(grid, end, start)
-    goal = Node(end, None)
+    path = backwardA(grid, end, start)
 
     print('Steps to goal: {0}'.format(len(path)))
 
