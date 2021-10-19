@@ -85,7 +85,7 @@ class heap:
     
     def percUp(self,i):
         while i // 2 > 0:
-            if self.heapList[i].g < self.heapList[i // 2].g:
+            if self.heapList[i].h < self.heapList[i // 2].h:
                 tmp = self.heapList[i // 2]
                 self.heapList[i // 2] = self.heapList[i]
                 self.heapList[i] = tmp
@@ -103,7 +103,7 @@ class heap:
                 i = mc
                 continue
             mc = self.minChild(i)
-            if self.heapList[i].g > self.heapList[mc].g:
+            if self.heapList[i].h > self.heapList[mc].h:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -113,7 +113,7 @@ class heap:
         if i * 2 + 1 > self.currentSize:
             return i * 2
         else:
-            if self.heapList[i*2].g < self.heapList[i*2+1].g:
+            if self.heapList[i*2].h < self.heapList[i*2+1].h:
                 return i * 2
             else:
                 return i * 2 + 1
@@ -409,7 +409,7 @@ def forwardA_smallestG(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f >= node.f):
+        if (neighbor == node and neighbor.g >= node.g):
             return False
     return True
 
@@ -427,23 +427,25 @@ def create_grid_solution(search_type, grid_arg):
     end = (100,100)
 
     print("TESTCASE ************************************")
-    print(grid)
+    # print(grid)
 
-    if search_type == 1: 
+    if search_type == "1": 
         path = adaptiveA(grid, start, end) 
-    elif search_type == 2: 
+    elif search_type == "2": 
         path = backwardA(grid, start, end)
-    elif search_type == 3: 
-        path = forwardA_largestG(grid, start, end)
-    elif search_type == 4: 
+    elif search_type == "3": 
+        close = []
+        open = heap()
+        path = forwardA_largestG(grid, start, end, close, open)
+    elif search_type == "4": 
         path = forwardA_smallestG(grid, start, end)
     
 
     print("RESULT ***************************************")
     print(grid)
-    drawGrid(grid)
+    drawGrid(grid, search_type)
 
-def drawGrid(grid):
+def drawGrid(grid, search_type):
     # grid RGB colors & meanings
     WHITE = (255, 255, 255) # grid == 1
     BLACK = (0, 0, 0) # grid == 0
@@ -451,13 +453,28 @@ def drawGrid(grid):
     RED = (255,99,71) # grid == 3
     GRAY = (211,211,211) # for background
     BLUE = (153,255,255) # grid[x][y] == 4, where current position is
-    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE]
+    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE, GRAY]
     # set the height/width of each location on the grid
     height = 4
     width = height # i want the grid square
     margin = 1 # sets margin between grid locations
     SCREEN.fill(GRAY) # fill background in grey
     
+    # start = (0,0)
+    # end = (100,100)
+
+    # print(search_type)
+
+    # if search_type == 1: 
+    #     path = adaptiveA(grid, start, end) 
+    # elif search_type == 2: 
+    #     path = backwardA(grid, start, end)
+    # elif search_type == '3': 
+    #     close = []
+    #     open = heap()
+    #     path = forwardA_largestG(grid, start, end, close, open)
+    # elif search_type == 4: 
+    #     path = forwardA_smallestG(grid, start, end)
 
     # mark start and ending positions in green and red
     grid[0][0] = 2
@@ -504,7 +521,7 @@ if __name__ == '__main__':
         grid_arg = grid_arg.replace('\n', '')
         grid_arg = convert(grid_arg)
         # print(grid_arg)
-           
+    print(sys.argv[1])
     #if random or testcase grid run create_grid_solution 
     if not(drawGridYet): create_grid_solution(sys.argv[1], grid_arg)
  
