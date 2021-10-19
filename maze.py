@@ -451,7 +451,7 @@ def drawGrid(grid):
     RED = (255,99,71) # grid == 3
     GRAY = (211,211,211) # for background
     BLUE = (153,255,255) # grid[x][y] == 4, where current position is
-    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE]
+    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE, GRAY]
     # set the height/width of each location on the grid
     height = 4
     width = height # i want the grid square
@@ -495,7 +495,6 @@ def convert(grid_arg):
 if __name__ == '__main__':
     num_of_args = len(sys.argv)
     grid_arg = []
-    drawGridYet = False
     if num_of_args < 2: 
         print("Please enter 1, 2, 3, or 4 for adaptive, backward, forward largest g, or forward smallest g searches")
         exit(1)
@@ -506,7 +505,7 @@ if __name__ == '__main__':
         # print(grid_arg)
            
     #if random or testcase grid run create_grid_solution 
-    if not(drawGridYet): create_grid_solution(sys.argv[1], grid_arg)
+    create_grid_solution(int(sys.argv[1]), grid_arg)
  
     running = True
     while running:

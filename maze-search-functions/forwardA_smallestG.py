@@ -155,13 +155,8 @@ class Node:
     def __repr__(self):
         return ('({0},{1})'.format(self.position, self.f))
 
-<<<<<<< HEAD:maze-search-functions/forwardA_smallestG.py
-# forwardA_smallestG
-def forwardA_smallestG(grid, start, end):
-=======
 # a star forward
 def asearch(grid, start, end, close, opened):
->>>>>>> c1c8182b45b47cbbb1e53d4af376b43f2747fb44:forwardA_smallestG.py
     closed = []
 
     open = heap()
@@ -272,16 +267,13 @@ def drawGrid():
     open = heap()
 
     # forward a*
-<<<<<<< HEAD:maze-search-functions/forwardA_smallestG.py
     path = forwardA_smallestG(grid, start, end)
     # backwards a*
     # path = forwardA_smallestG(grid, end, start)
     goal = Node(end, None)
-=======
     path = asearch(grid, start, end, close, open)
     # backwards a*
     # path = asearch(grid, end, start)
->>>>>>> c1c8182b45b47cbbb1e53d4af376b43f2747fb44:forwardA_smallestG.py
 
     print('Steps to goal: {0}'.format(len(path)))
 
