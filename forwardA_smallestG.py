@@ -102,7 +102,7 @@ class heap:
                 i = mc
                 continue
             mc = self.minChild(i)
-            if self.heapList[i].g > self.heapList[mc].g:
+            if self.heapList[i].h > self.heapList[mc].h:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -156,7 +156,7 @@ class Node:
         return ('({0},{1})'.format(self.position, self.f))
 
 # a star forward
-def asearch(grid, start, end):
+def asearch(grid, start, end, close, opened):
     closed = []
 
     open = heap()
@@ -164,13 +164,25 @@ def asearch(grid, start, end):
     start_node = Node(start, None)
     goal_node = Node(end, None)
 
+    # print(start_node)
+
+    if(start_node == goal_node):
+        return
+
     open.insert(start_node)
 
     while open.currentSize > 0:
-        open.buildHeap(open.heapList)
+        # open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
+            # print(current_node.h)
+            # print(current_node)
+        # if(open.currentSize > 0):
+        #     next_node = open.delMin()
+        #     if(next_node.g < current_node.g): # checks if our g value is greater
+        #         current_node = next_node
+
         closed.append(current_node)
 
         if current_node == goal_node:
@@ -184,10 +196,12 @@ def asearch(grid, start, end):
         
         (x, y) = current_node.position
         # Get neighbors
-        neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+        neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1)]
 
         for next in neighbors:
             if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
+                # print("next")
+                # print(next)
                 map_value = grid[next[0]][next[1]]
             else:
                 continue
@@ -195,6 +209,8 @@ def asearch(grid, start, end):
             # Check if the node is a wall
             if(map_value == 1):
                 continue
+            # Colors neighbors gray to represent that we've expanded it
+            grid[next[0]][next[1]] = 5
             # Create a neighbor node
             neighbor = Node(next, current_node)
             # Check if the neighbor is in the closed list
@@ -204,11 +220,15 @@ def asearch(grid, start, end):
             neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
             neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.f = neighbor.g + neighbor.h
-            # Check if neighbor is in open list and if it has a larger g value
+            # Check if neighbor is in open list and if it has a lower f value
             if(add_to_open(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
-                open.insert(neighbor)    
-    
+                open.insert(neighbor) 
+                # return asearch(grid, current_node.position, end, closed, open)
+    # if(current_node == start_node):
+    #     return []
+    # print(closed)
+    # return asearch(grid, current_node.position, end, closed)
     return []
 
 def add_to_open(open, neighbor):
@@ -230,7 +250,7 @@ def drawGrid():
     RED = (255,99,71) # grid == 3
     GRAY = (211,211,211) # for background
     BLUE = (153,255,255) # grid[x][y] == 4, where current position is
-    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE]
+    idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE, GRAY]
 
     # set the height/width of each location on the grid
     height = 4
@@ -243,12 +263,13 @@ def drawGrid():
 
     start = (0,0)
     end = (100,100)
+    close = []
+    open = heap()
 
     # forward a*
-    path = asearch(grid, start, end)
+    path = asearch(grid, start, end, close, open)
     # backwards a*
     # path = asearch(grid, end, start)
-    goal = Node(end, None)
 
     print('Steps to goal: {0}'.format(len(path)))
 
