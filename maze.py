@@ -7,7 +7,7 @@ WIDTH, HEIGHT = 505, 505
 CELL_SIZE = 5
 ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
 
- #Initializing pygame screen
+#Initializing pygame screen
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Maze Generator")
@@ -22,9 +22,7 @@ cols = 101
 rows = 101
 grid = [[1 for i in range(cols)] for j in range(rows)] #iterates all as open
 
-# Function to check if mat[row][col]
-# is unvisited and lies within the
-# boundary of the given matrix
+# Function to check if mat[row][col] is unvisited and lies within the boundary of the given matrix
 def isValid(row, col):
     global vis
      
@@ -46,13 +44,11 @@ def DFS(row, col, grid):
     global dCol
     global vis
      
-    # Initialize a stack of pairs and
-    # push the starting cell into it
+    # Initialize a stack of pairs and push the starting cell into it
     st = []
     st.append([row, col])
  
-    # Iterate until the
-    # stack is not empty
+    # Iterate until the stack is not empty
     while (len(st) > 0):
         # Pop the top pair
         curr = st[len(st) - 1]
@@ -60,17 +56,14 @@ def DFS(row, col, grid):
         row = curr[0]
         col = curr[1]
  
-        # Check if the current popped
-        # cell is a valid cell or not
+        # Check if the current popped cell is a valid cell or not
         if (isValid(row, col) == False):
             continue
  
-        # Mark the current
-        # cell as visited
+        # Mark the current cell as visited
         vis[row][col] = True
  
-        # Print the element at
-        # the current top cell
+        # Print the element at the current top cell
         # Check probability
         rand = random.random()
 
@@ -101,6 +94,26 @@ class Node:
     # Print node
     def __repr__(self):
         return ('({0},{1})'.format(self.position, self.f))
+
+# Draw a grid
+def draw_grid(map, width, height, spacing=2, **kwargs):
+    for y in range(height):
+        for x in range(width):
+            print('-' + draw_tile(map, (x, y), kwargs), end='')
+        print()
+# Draw a tile
+def draw_tile(map, position, kwargs):
+    
+    # Get the map value
+    value = map[position]
+    # Check if we should print the path
+    if 'path' in kwargs and position in kwargs['path']: value = 'P'
+    # Check if we should print start point
+    if 'start' in kwargs and position == kwargs['start']: value = '@ '
+    # Check if we should print the goal point
+    if 'goal' in kwargs and position == kwargs['goal']: value = '$'
+    # Return a tile value
+    return value 
 
 # a star
 def asearch(grid, start, end):
@@ -169,7 +182,7 @@ def drawGrid():
     grid[0][0] = 0
     grid[100][100] = 0
 
-     # grid RGB colors & meanings
+# grid RGB colors & meanings
     WHITE = (255, 255, 255) # grid == 1
     BLACK = (0, 0, 0) # grid == 0
     GREEN = (50,205,50) # grid == 2
