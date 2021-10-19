@@ -101,26 +101,6 @@ class Node:
     # Print node
     def __repr__(self):
         return ('({0},{1})'.format(self.position, self.f))
-# Draw a grid
-def draw_grid(map, width, height, spacing=2, **kwargs):
-    for y in range(height):
-        for x in range(width):
-            print('-' + draw_tile(map, (x, y), kwargs), end='')
-        print()
-# Draw a tile
-def draw_tile(map, position, kwargs):
-    
-    # Get the map value
-    
-    value = map[position]
-    # Check if we should print the path
-    if 'path' in kwargs and position in kwargs['path']: value = 'P'
-    # Check if we should print start point
-    if 'start' in kwargs and position == kwargs['start']: value = '@ '
-    # Check if we should print the goal point
-    if 'goal' in kwargs and position == kwargs['goal']: value = '$'
-    # Return a tile value
-    return value 
 
 # a star
 def asearch(grid, start, end):
@@ -135,12 +115,14 @@ def asearch(grid, start, end):
     while len(open) > 0:
         open.sort() #get lowest cost
         current_node = open.pop(0)
+        print(current_node)
         closed.append(current_node)
 
         if current_node == goal_node:
             path = []
             while current_node != start_node:
                 path.append(current_node.position)
+                grid[current_node.position[0]][current_node.position[1]] = 4
                 current_node = current_node.parent
             # Return reversed path
             return path[::-1]
@@ -201,9 +183,6 @@ def drawGrid():
     width = height # i want the grid square
     margin = 1 # sets margin between grid locations
 
-    grid[0][0] = 2
-    grid[100][100] = 3
-
     SCREEN.fill(GRAY) # fill background in grey
 
     start = (0,0)
@@ -211,9 +190,13 @@ def drawGrid():
 
     path = asearch(grid, start, end)
 
-    print(path)
+    # mark start and ending positions in green and red
+    grid[0][0] = 2
+    grid[100][100] = 3
+
+    # print(path)
     #draw_grid(map, 101, 101, spacing=1, path=path, start=start, goal=end)
-    print('Steps to goal: {0}'.format(len(path)))
+    # print('Steps to goal: {0}'.format(len(path)))
 
     for i in range(101):
         for j in range(101):
