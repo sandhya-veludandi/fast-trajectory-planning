@@ -3,7 +3,7 @@ import pygame
 import numpy as np
 
 #proportions of pygame screen on computer in pixels
-WIDTH, HEIGHT = 505, 505
+WIDTH, HEIGHT = 515, 515
 CELL_SIZE = 5
 ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
 
@@ -84,7 +84,7 @@ class heap:
     
     def percUp(self,i):
         while i // 2 > 0:
-            if self.heapList[i] < self.heapList[i // 2]:
+            if self.heapList[i].h < self.heapList[i // 2].h:
                 tmp = self.heapList[i // 2]
                 self.heapList[i // 2] = self.heapList[i]
                 self.heapList[i] = tmp
@@ -97,8 +97,12 @@ class heap:
     
     def percDown(self,i):
         while (i * 2) <= self.currentSize:
+            if(isinstance(self.heapList[i], int)):
+                mc = self.minChild(i)
+                i = mc
+                continue
             mc = self.minChild(i)
-            if self.heapList[i] > self.heapList[mc]:
+            if self.heapList[i].h > self.heapList[mc].h:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -144,7 +148,9 @@ class Node:
         return self.position == other.position
     # Sort nodes
     def __lt__(self, other):
-         return self.f < other.f
+        if(isinstance(other, int)):
+            return False
+        return self.f < other.f
     # Print node
     def __repr__(self):
         return ('({0},{1})'.format(self.position, self.f))
@@ -159,10 +165,14 @@ def asearch(grid, start, end):
     goal_node = Node(end, None)
 
     open.insert(start_node)
-    # print(open.heapList[1])
 
     while open.currentSize > 0:
+        open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
+        while(current_node == 0):
+            current_node = open.delMin() #deletes min again because heap is automatically created with 0
+            # print(current_node.h)
+            # print(current_node)
         closed.append(current_node)
 
         if current_node == goal_node:
@@ -184,7 +194,6 @@ def asearch(grid, start, end):
             else:
                 continue
             # Get value from map
-            #map_value = grid[next[0]][next[1]]
             # Check if the node is a wall
             if(map_value == 1):
                 continue
@@ -231,6 +240,8 @@ def drawGrid():
     margin = 1 # sets margin between grid locations
 
     SCREEN.fill(GRAY) # fill background in grey
+    #draw_grid(map, 101, 101, spacing=1, path=path, start=start, goal=end)
+    #print('Steps to goal: {0}'.format(len(path)))
 
     start = (0,0)
     end = (100,100)
@@ -240,9 +251,8 @@ def drawGrid():
     grid[0][0] = 2
     grid[100][100] = 3
 
-    #print(path)
-    #draw_grid(map, 101, 101, spacing=1, path=path, start=start, goal=end)
-    #print('Steps to goal: {0}'.format(len(path)))
+    # if(path == "I cannot reach the target"):
+    #     return "I cannot reach the target"
 
     for i in range(101):
         for j in range(101):
@@ -262,4 +272,6 @@ if __name__ == '__main__':
             if event.type == pygame.QUIT:
                 running = False
         drawGrid()
+        # if(result == "I cannot reach the target"):
+        #     print("I cannot reach the target")
 
