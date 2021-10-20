@@ -382,27 +382,47 @@ def forwardA_smallestG(grid, start, end):
             grid[next[0]][next[1]] = 5
             # Create a neighbor node
             neighbor = Node(next, current_node)
+
             # Check if the neighbor is in the closed list
             if(neighbor in closed):
                 continue
+
             # Generate heuristics (Manhattan distance)
             neighbor.g = current_node.g + 1
             # neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
             neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.f = neighbor.g + neighbor.h
+
+            # If the neighbor is not in the open list, add it to the open list
+            if(neighbor not in open): 
+                open.insert(neighbor)
+                neighbor.parent = current_node
+
             # Check if neighbor is in open list and if it has a lower f value
+<<<<<<< HEAD
+            elif(neighbor in open and add_to_openS(open, neighbor) == True):
+=======
             if(add_to_openS(open, neighbor, current_node) == True):
+>>>>>>> 81bd90d2a6467fe3fbd6a8186ca5a6c87432371a
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor) 
     return []
 
 def add_to_open(open, neighbor, current):
     for node in open.heapList:
+<<<<<<< HEAD
+        if (neighbor == node and neighbor.f > node.f):
+            return False
+        if (neighbor == node and neighbor.f == node.f):
+            if(neighbor.g > node.g):
+                print("breaking ties")
+=======
         if(neighbor == node): #Neighbor in open list
             if(neighbor.g > node.g): #Neighbor's g is greater
                 neighbor.parent = current #Make this square's parent the current square
                 neighbor.g = current.g + 1
                 neighbor.f = neighbor.h + neighbor.g
+>>>>>>> 81bd90d2a6467fe3fbd6a8186ca5a6c87432371a
                 return True
             else: 
                 return False
@@ -418,6 +438,10 @@ def add_to_open(open, neighbor, current):
 
 def add_to_openS(open, neighbor, current):
     for node in open.heapList:
+<<<<<<< HEAD
+        if (neighbor == node):
+            if(neighbor.g < node.g):
+=======
         if(neighbor == node): #Neighbor in open list
             if(neighbor.g < node.g): #Neighbor's g is greater
                 neighbor.parent = current #Make this square's parent the current square
@@ -425,6 +449,7 @@ def add_to_openS(open, neighbor, current):
                 neighbor.f = neighbor.h + neighbor.g
                 return True
             else: 
+>>>>>>> 81bd90d2a6467fe3fbd6a8186ca5a6c87432371a
                 return False
         # if (neighbor == node and neighbor.f > node.f):
         #     return False
