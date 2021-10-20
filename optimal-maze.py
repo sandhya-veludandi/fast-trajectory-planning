@@ -46,14 +46,10 @@ def DFS(row, col, grid):
     global dCol
     global vis
 
-    # Initialize a stack of pairs and
-    # push the starting cell into it
     # Initialize a stack of pairs and push the starting cell into it
     st = []
     st.append([row, col])
 
-    # Iterate until the
-    # stack is not empty
     # Iterate until the stack is not empty
     while (len(st) > 0):
         # Pop the top pair
@@ -62,19 +58,13 @@ def DFS(row, col, grid):
         row = curr[0]
         col = curr[1]
 
-        # Check if the current popped
-        # cell is a valid cell or not
         # Check if the current popped cell is a valid cell or not
         if (isValid(row, col) == False):
             continue
 
-        # Mark the current
-        # cell as visited
         # Mark the current cell as visited
         vis[row][col] = True
 
-        # Print the element at
-        # the current top cell
         # Print the element at the current top cell
         # Check probability
         rand = random.random()
@@ -157,6 +147,7 @@ def asearch(grid, start, end):
                 open.append(neighbor)    
     
     return "I cannot reach the target"
+
 def add_to_open(open, neighbor):
     for node in open:
         if (neighbor == node and neighbor.f >= node.f):
@@ -200,7 +191,6 @@ def drawGrid(grid):
     margin = 1 # sets margin between grid locations
     SCREEN.fill(GRAY) # fill background in grey
     
-
     # mark start and ending positions in green and red
     grid[0][0] = 2
     grid[100][100] = 3
