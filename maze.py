@@ -390,13 +390,13 @@ def forwardA_smallestG(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.g >= node.g):
+        if (neighbor == node and neighbor.f >= node.f):
             return False
     return True
 
 def add_to_openS(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.g <= node.g):
+        if (neighbor == node and neighbor.f <= node.f):
             return False
     return True
 
@@ -416,20 +416,20 @@ def create_grid_solution(search_type, grid_arg):
     print("TESTCASE ************************************")
     # print(grid)
 
-    if search_type == "1": 
+    if search_type == 1: 
         path = adaptiveA(grid, start, end) 
-    elif search_type == "2": 
+    elif search_type == 2: 
         path = backwardA(grid, start, end)
-    elif search_type == "3": 
+    elif search_type == 3: 
         close = []
         open = heap()
         path = forwardA_largestG(grid, start, end, close, open)
-    elif search_type == "4": 
+    elif search_type == 4: 
         path = forwardA_smallestG(grid, start, end)
     
 
     print("RESULT ***************************************")
-    print(grid)
+    # print(grid)
     drawGrid(grid, search_type)
 
 def drawGrid(grid, search_type):
@@ -446,29 +446,11 @@ def drawGrid(grid, search_type):
     width = height # i want the grid square
     margin = 1 # sets margin between grid locations
     SCREEN.fill(GRAY) # fill background in grey
-    
-    # start = (0,0)
-    # end = (100,100)
-
-    # print(search_type)
-
-    # if search_type == 1: 
-    #     path = adaptiveA(grid, start, end) 
-    # elif search_type == 2: 
-    #     path = backwardA(grid, start, end)
-    # elif search_type == '3': 
-    #     close = []
-    #     open = heap()
-    #     path = forwardA_largestG(grid, start, end, close, open)
-    # elif search_type == 4: 
-    #     path = forwardA_smallestG(grid, start, end)
 
     # mark start and ending positions in green and red
     grid[0][0] = 2
     grid[100][100] = 3
-    # print(path)
-    #draw_grid(map, 101, 101, spacing=1, path=path, start=start, goal=end)
-    # print('Steps to goal: {0}'.format(len(path)))
+
     for i in range(101):
         for j in range(101):
             COLOR = idx_to_color[grid[i][j]]
@@ -507,7 +489,6 @@ if __name__ == '__main__':
         grid_arg = grid_arg.replace('\n', '')
         grid_arg = convert(grid_arg)
         # print(grid_arg)
-    print(sys.argv[1])
     #if random or testcase grid run create_grid_solution 
     create_grid_solution(int(sys.argv[1]), grid_arg)
  
