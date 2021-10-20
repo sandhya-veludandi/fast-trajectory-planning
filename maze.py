@@ -168,7 +168,7 @@ def adaptiveA(grid, start, end):
     open.insert(start_node)
 
     while open.currentSize > 0:
-        open.buildHeap(open.heapList)
+        # open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
@@ -286,6 +286,7 @@ def forwardA_largestG(grid, start, end, close, opened):
     open.insert(start_node)
 
     while open.currentSize > 0:
+        # open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
@@ -303,7 +304,7 @@ def forwardA_largestG(grid, start, end, close, opened):
         
         (x, y) = current_node.position
         # Get neighbors
-        neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1)]
+        neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
 
         for next in neighbors:
             if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
@@ -313,6 +314,7 @@ def forwardA_largestG(grid, start, end, close, opened):
             # Get value from map
             # Check if the node is a wall
             if(map_value == 1):
+                #grid[next[0]][next[1]] = 6 # Represents wall seen
                 continue
             # Colors neighbors gray to represent that we've expanded it
             grid[next[0]][next[1]] = 5
@@ -343,6 +345,7 @@ def forwardA_smallestG(grid, start, end):
     open.insert(start_node)
 
     while open.currentSize > 0:
+        # open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
@@ -360,7 +363,7 @@ def forwardA_smallestG(grid, start, end):
         
         (x, y) = current_node.position
         # Get neighbors
-        neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1)]
+        neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
 
         for next in neighbors:
             if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
@@ -390,14 +393,16 @@ def forwardA_smallestG(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f >= node.f):
-            return False
+        if (neighbor == node):
+            if(neighbor.g >= node.g):
+                return False
     return True
 
 def add_to_openS(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f <= node.f):
-            return False
+        if (neighbor == node):
+            if(neighbor.g <= node.g):
+                return False
     return True
 
 def create_grid_solution(search_type, grid_arg):
@@ -441,6 +446,7 @@ def drawGrid(grid, search_type):
     GRAY = (211,211,211) # for background
     BLUE = (153,255,255) # grid[x][y] == 4, where current position is
     idx_to_color = [WHITE, BLACK, GREEN, RED, BLUE, GRAY]
+    #idx_to_color = [GRAY, GRAY, GREEN, RED, BLUE, WHITE, BLACK]
     # set the height/width of each location on the grid
     height = 4
     width = height # i want the grid square
