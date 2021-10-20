@@ -8,6 +8,9 @@ WIDTH, HEIGHT = 505, 505
 CELL_SIZE = 5
 ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
 
+# Keeps track of expanded cells
+expanded = 0
+
 #Initializing pygame screen
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -158,6 +161,7 @@ class Node:
 
 # a star forward
 def adaptiveA(grid, start, end):
+    global expanded
     closed = []
 
     open = heap()
@@ -200,6 +204,7 @@ def adaptiveA(grid, start, end):
                 continue
 
             grid[next[0]][next[1]] = 5
+            expanded = expanded + 1
             # Create a neighbor node
             neighbor = Node(next, current_node)
             # Check if the neighbor is in the closed list
@@ -219,6 +224,7 @@ def adaptiveA(grid, start, end):
 
 # backwardA
 def backwardA(grid, start, end):
+    global expanded
     closed = []
 
     open = heap()
@@ -261,6 +267,7 @@ def backwardA(grid, start, end):
                 continue
             # Colors neighbors gray to represent that we've expanded it
             grid[next[0]][next[1]] = 5
+            expanded = expanded + 1
             # Create a neighbor node
             neighbor = Node(next, current_node)
             # Check if the neighbor is in the closed list
@@ -279,6 +286,8 @@ def backwardA(grid, start, end):
 
 # forwardA_lagestG
 def forwardA_largestG(grid, start, end):
+    global expanded
+
     closed = []
 
     open = heap()
@@ -323,6 +332,7 @@ def forwardA_largestG(grid, start, end):
             grid[next[0]][next[1]] = 5
             # Create a neighbor node
             neighbor = Node(next, current_node)
+            expanded = expanded + 1
             # Check if the neighbor is in the closed list
             if(neighbor in closed):
                 continue
@@ -339,6 +349,7 @@ def forwardA_largestG(grid, start, end):
 
 # forwardA_smallestG
 def forwardA_smallestG(grid, start, end):
+    global expanded
     closed = []
 
     open = heap()
@@ -380,6 +391,7 @@ def forwardA_smallestG(grid, start, end):
                 continue
             # Colors neighbors gray to represent that we've expanded it
             grid[next[0]][next[1]] = 5
+            expanded = expanded + 1
             # Create a neighbor node
             neighbor = Node(next, current_node)
 
@@ -477,6 +489,8 @@ def create_grid_solution(search_type, grid_arg):
     
 
     print("RESULT ***************************************")
+    print("Expanded cells: ", end="")
+    print(expanded)
     # print(grid)
     drawGrid(grid)
 
