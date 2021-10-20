@@ -378,15 +378,23 @@ def forwardA_smallestG(grid, start, end):
             grid[next[0]][next[1]] = 5
             # Create a neighbor node
             neighbor = Node(next, current_node)
+
             # Check if the neighbor is in the closed list
             if(neighbor in closed):
                 continue
+
             # Generate heuristics (Manhattan distance)
             neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
             neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.f = neighbor.g + neighbor.h
+
+            # If the neighbor is not in the open list, add it to the open list
+            if(neighbor not in open): 
+                open.insert(neighbor)
+                neighbor.parent = current_node
+
             # Check if neighbor is in open list and if it has a lower f value
-            if(add_to_openS(open, neighbor) == True):
+            elif(neighbor in open and add_to_openS(open, neighbor) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor) 
     return []
@@ -396,14 +404,15 @@ def add_to_open(open, neighbor):
         if (neighbor == node and neighbor.f > node.f):
             return False
         if (neighbor == node and neighbor.f == node.f):
-            if(neighbor.g >= node.g):
+            if(neighbor.g > node.g):
+                print("breaking ties")
                 return True
     return True
 
 def add_to_openS(open, neighbor):
     for node in open.heapList:
         if (neighbor == node):
-            if(neighbor.g <= node.g):
+            if(neighbor.g < node.g):
                 return False
     return True
 
