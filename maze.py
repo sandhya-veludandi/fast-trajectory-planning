@@ -399,30 +399,18 @@ def forwardA_smallestG(grid, start, end):
                 neighbor.parent = current_node
 
             # Check if neighbor is in open list and if it has a lower f value
-<<<<<<< HEAD
-            elif(neighbor in open and add_to_openS(open, neighbor) == True):
-=======
             if(add_to_openS(open, neighbor, current_node) == True):
->>>>>>> 81bd90d2a6467fe3fbd6a8186ca5a6c87432371a
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor) 
     return []
 
 def add_to_open(open, neighbor, current):
     for node in open.heapList:
-<<<<<<< HEAD
-        if (neighbor == node and neighbor.f > node.f):
-            return False
-        if (neighbor == node and neighbor.f == node.f):
-            if(neighbor.g > node.g):
-                print("breaking ties")
-=======
         if(neighbor == node): #Neighbor in open list
             if(neighbor.g > node.g): #Neighbor's g is greater
                 neighbor.parent = current #Make this square's parent the current square
                 neighbor.g = current.g + 1
                 neighbor.f = neighbor.h + neighbor.g
->>>>>>> 81bd90d2a6467fe3fbd6a8186ca5a6c87432371a
                 return True
             else: 
                 return False
@@ -438,10 +426,6 @@ def add_to_open(open, neighbor, current):
 
 def add_to_openS(open, neighbor, current):
     for node in open.heapList:
-<<<<<<< HEAD
-        if (neighbor == node):
-            if(neighbor.g < node.g):
-=======
         if(neighbor == node): #Neighbor in open list
             if(neighbor.g < node.g): #Neighbor's g is greater
                 neighbor.parent = current #Make this square's parent the current square
@@ -449,7 +433,6 @@ def add_to_openS(open, neighbor, current):
                 neighbor.f = neighbor.h + neighbor.g
                 return True
             else: 
->>>>>>> 81bd90d2a6467fe3fbd6a8186ca5a6c87432371a
                 return False
         # if (neighbor == node and neighbor.f > node.f):
         #     return False
