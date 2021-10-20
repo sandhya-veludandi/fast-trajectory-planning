@@ -207,11 +207,11 @@ def adaptiveA(grid, start, end):
                 continue
             goal =  goal_node.position[0] + goal_node.position[1]
             # h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
-            neighbor.g = (abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1]))
+            neighbor.g = current_node.g + 1
             neighbor.h = goal - (abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1]))
             neighbor.f = neighbor.g + neighbor.h
             # Check if neighbor is in open list and if it has a lower f value
-            if(add_to_open(open, neighbor) == True):
+            if(add_to_open(open, neighbor, current_node) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor)    
     
