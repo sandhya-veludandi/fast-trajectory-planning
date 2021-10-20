@@ -390,8 +390,9 @@ def forwardA_smallestG(grid, start, end):
 
 def add_to_open(open, neighbor):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f >= node.f):
+        if (neighbor == node and neighbor.f > node.f):
             return False
+        
     return True
 
 def add_to_openS(open, neighbor):
