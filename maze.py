@@ -499,7 +499,6 @@ def convert(grid_arg):
 if __name__ == '__main__':
     num_of_args = len(sys.argv)
     grid_arg = []
-    drawGridYet = False
     if num_of_args < 2: 
         print("Please enter 1, 2, 3, or 4 for adaptive, backward, forward largest g, or forward smallest g searches")
         exit(1)
@@ -510,7 +509,7 @@ if __name__ == '__main__':
         # print(grid_arg)
     print(sys.argv[1])
     #if random or testcase grid run create_grid_solution 
-    if not(drawGridYet): create_grid_solution(sys.argv[1], grid_arg)
+    create_grid_solution(int(sys.argv[1]), grid_arg)
  
     running = True
     while running:
