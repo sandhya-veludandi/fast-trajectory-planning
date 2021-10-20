@@ -85,7 +85,7 @@ class heap:
     
     def percUp(self,i):
         while i // 2 > 0:
-            if self.heapList[i].h < self.heapList[i // 2].h:
+            if self.heapList[i].f < self.heapList[i // 2].f:
                 tmp = self.heapList[i // 2]
                 self.heapList[i // 2] = self.heapList[i]
                 self.heapList[i] = tmp
@@ -103,7 +103,7 @@ class heap:
                 i = mc
                 continue
             mc = self.minChild(i)
-            if self.heapList[i].h > self.heapList[mc].h:
+            if self.heapList[i].f > self.heapList[mc].f:
                 tmp = self.heapList[i]
                 self.heapList[i] = self.heapList[mc]
                 self.heapList[mc] = tmp
@@ -113,7 +113,7 @@ class heap:
         if i * 2 + 1 > self.currentSize:
             return i * 2
         else:
-            if self.heapList[i*2].h < self.heapList[i*2+1].h:
+            if self.heapList[i*2].f < self.heapList[i*2+1].f:
                 return i * 2
             else:
                 return i * 2 + 1
@@ -229,64 +229,7 @@ def backwardA(grid, start, end):
     open.insert(start_node)
 
     while open.currentSize > 0:
-        current_node = open.delMin() #gets the minimum and deletes it from the heap
-        while(current_node == 0):
-            current_node = open.delMin() #deletes min again because heap is automatically created with 0
-
-        closed.append(current_node)
-
-        if current_node == goal_node:
-            path = []
-            while current_node != start_node:
-                path.append(current_node.position)
-                grid[current_node.position[0]][current_node.position[1]] = 4
-                current_node = current_node.parent
-            # Return reversed path
-            return path[::-1]
-        
-        (x, y) = current_node.position
-        # Get neighbors
-        neighbors = [(x+1, y), (x, y+1), (x-1, y), (x, y-1)]
-
-        for next in neighbors:
-            if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
-                map_value = grid[next[0]][next[1]]
-            else:
-                continue
-            # Get value from map
-            # Check if the node is a wall
-            if(map_value == 1):
-                continue
-            # Colors neighbors gray to represent that we've expanded it
-            grid[next[0]][next[1]] = 5
-            # Create a neighbor node
-            neighbor = Node(next, current_node)
-            # Check if the neighbor is in the closed list
-            if(neighbor in closed):
-                continue
-            # Generate heuristics (Manhattan distance)
-            neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
-            neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
-            neighbor.f = neighbor.g + neighbor.h
-            # Check if neighbor is in open list and if it has a lower f value
-            if(add_to_openS(open, neighbor) == True):
-                # Everything is green, add neighbor to open list
-                open.insert(neighbor) 
-    return []
-
-# forwardA_lagestG
-def forwardA_largestG(grid, start, end, close, opened):
-    closed = []
-
-    open = heap()
-
-    start_node = Node(start, None)
-    goal_node = Node(end, None)
-
-    open.insert(start_node)
-
-    while open.currentSize > 0:
-        # open.buildHeap(open.heapList)
+        open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
@@ -324,11 +267,72 @@ def forwardA_largestG(grid, start, end, close, opened):
             if(neighbor in closed):
                 continue
             # Generate heuristics (Manhattan distance)
-            neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
+            neighbor.g = current_node.g + 1
+            # neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
             neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.f = neighbor.g + neighbor.h
             # Check if neighbor is in open list and if it has a lower f value
-            if(add_to_open(open, neighbor) == True):
+            if(add_to_open(open, neighbor, current_node) == True):
+                # Everything is green, add neighbor to open list
+                open.insert(neighbor) 
+    return []
+
+# forwardA_lagestG
+def forwardA_largestG(grid, start, end):
+    closed = []
+
+    open = heap()
+
+    start_node = Node(start, None)
+    goal_node = Node(end, None)
+
+    open.insert(start_node)
+
+    while open.currentSize > 0:
+        open.buildHeap(open.heapList)
+        current_node = open.delMin() #gets the minimum and deletes it from the heap
+        while(current_node == 0):
+            current_node = open.delMin() #deletes min again because heap is automatically created with 0
+
+        closed.append(current_node)
+
+        if current_node == goal_node:
+            path = []
+            while current_node != start_node:
+                path.append(current_node.position)
+                grid[current_node.position[0]][current_node.position[1]] = 4
+                current_node = current_node.parent
+            # Return reversed path
+            return path[::-1]
+        
+        (x, y) = current_node.position
+        # Get neighbors
+        neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
+
+        for next in neighbors:
+            if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
+                map_value = grid[next[0]][next[1]]
+            else:
+                continue
+            # Get value from map
+            # Check if the node is a wall
+            if(map_value == 1):
+                #grid[next[0]][next[1]] = 6 # Represents wall seen
+                continue
+            # Colors neighbors gray to represent that we've expanded it
+            grid[next[0]][next[1]] = 5
+            # Create a neighbor node
+            neighbor = Node(next, current_node)
+            # Check if the neighbor is in the closed list
+            if(neighbor in closed):
+                continue
+            # Generate heuristics (Manhattan distance)
+            neighbor.g = current_node.g + 1
+            # neighbor.g = abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1])
+            neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
+            neighbor.f = neighbor.g + neighbor.h
+            # Check if neighbor is in open list and if it has a lower f value
+            if(add_to_open(open, neighbor, current_node) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor) 
     return []
@@ -345,7 +349,7 @@ def forwardA_smallestG(grid, start, end):
     open.insert(start_node)
 
     while open.currentSize > 0:
-        # open.buildHeap(open.heapList)
+        open.buildHeap(open.heapList)
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
@@ -387,35 +391,61 @@ def forwardA_smallestG(grid, start, end):
             neighbor.h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.f = neighbor.g + neighbor.h
             # Check if neighbor is in open list and if it has a lower f value
-            if(add_to_openS(open, neighbor) == True):
+            if(add_to_openS(open, neighbor, current_node) == True):
                 # Everything is green, add neighbor to open list
                 open.insert(neighbor) 
     return []
 
-def add_to_open(open, neighbor):
+def add_to_open(open, neighbor, current):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f > node.f):
-            return False
-        if (neighbor == node and neighbor.f == node.f):
-            if(neighbor.g >= node.g):
-                print("breaking ties")
+        if(neighbor == node): #Neighbor in open list
+            if(neighbor.g > node.g): #Neighbor's g is greater
+                neighbor.parent = current #Make this square's parent the current square
+                neighbor.g = current.g + 1
+                neighbor.f = neighbor.h + neighbor.g
                 return True
-            else:
+            else: 
                 return False
+        # if (neighbor == node and neighbor.f > node.f):
+        #     return False
+        # if (neighbor == node and neighbor.f == node.f):
+        #     if(neighbor.g > node.g):
+        #         print("breaking ties")
+        #         return True
+        #     else:
+        #         return False
     return True
 
-def add_to_openS(open, neighbor):
+def add_to_openS(open, neighbor, current):
     for node in open.heapList:
-        if (neighbor == node and neighbor.f > node.f):
-            return False
-        if (neighbor == node and neighbor.f == node.f):
-            print("in this")
-            if(neighbor.g <= node.g):
-                print("breaking ties")
+        if(neighbor == node): #Neighbor in open list
+            if(neighbor.g < node.g): #Neighbor's g is greater
+                neighbor.parent = current #Make this square's parent the current square
+                neighbor.g = current.g + 1
+                neighbor.f = neighbor.h + neighbor.g
                 return True
-            else:
+            else: 
                 return False
+        # if (neighbor == node and neighbor.f > node.f):
+        #     return False
+        # if (neighbor == node and neighbor.f == node.f):
+        #     if(neighbor.g > node.g):
+        #         print("breaking ties")
+        #         return True
+        #     else:
+        #         return False
     return True
+    # for node in open.heapList:
+    #     if (neighbor == node and neighbor.f > node.f):
+    #         return False
+    #     if (neighbor == node and neighbor.f == node.f):
+    #         # print("in this")
+    #         if(neighbor.g < node.g):
+    #             print("breaking ties")
+    #             return True
+    #         else:
+    #             return False
+    # return True
 
 def create_grid_solution(search_type, grid_arg):
     grid = [[1 for i in range(cols)] for j in range(rows)]
@@ -436,20 +466,18 @@ def create_grid_solution(search_type, grid_arg):
     if search_type == 1: 
         path = adaptiveA(grid, start, end) 
     elif search_type == 2: 
-        path = backwardA(grid, start, end)
+        path = backwardA(grid, end, start)
     elif search_type == 3: 
-        close = []
-        open = heap()
-        path = forwardA_largestG(grid, start, end, close, open)
+        path = forwardA_largestG(grid, start, end)
     elif search_type == 4: 
         path = forwardA_smallestG(grid, start, end)
     
 
     print("RESULT ***************************************")
     # print(grid)
-    drawGrid(grid, search_type)
+    drawGrid(grid)
 
-def drawGrid(grid, search_type):
+def drawGrid(grid):
     # grid RGB colors & meanings
     WHITE = (255, 255, 255) # grid == 1
     BLACK = (0, 0, 0) # grid == 0
