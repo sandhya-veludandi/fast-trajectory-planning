@@ -544,7 +544,7 @@ def convert(grid_arg):
 def simulateGrids(): 
     savedGrids = []
     grid = [[1 for i in range(cols)] for j in range(rows)] #iterates all as open
-    for i in 50:
+    for i in range(50):
         DFS(0, 0, grid)
         grid[0][0] = 2
         grid[100][100] = 3
@@ -555,6 +555,8 @@ def simulateGrids():
 
 if __name__ == '__main__':
     num_of_args = len(sys.argv)
+    newGrids = simulateGrids()
+    print(newGrids)
     grid_arg = []
     if num_of_args < 2: 
         print("Please enter 1, 2, 3, or 4 for adaptive, backward, forward largest g, or forward smallest g searches")
