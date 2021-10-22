@@ -541,6 +541,18 @@ def convert(grid_arg):
     # print(grid_result)
     return grid_result
 
+def simulateGrids(): 
+    savedGrids = []
+    grid = [[1 for i in range(cols)] for j in range(rows)] #iterates all as open
+    for i in 50:
+        DFS(0, 0, grid)
+        grid[0][0] = 2
+        grid[100][100] = 3
+        savedGrids.append(grid)
+        grid = [[1 for i in range(cols)] for j in range(rows)] #iterates all as open
+    return savedGrids
+
+
 if __name__ == '__main__':
     num_of_args = len(sys.argv)
     grid_arg = []
