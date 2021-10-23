@@ -11,6 +11,9 @@ ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
 # Keeps track of expanded cells
 expanded = 0
 
+# keeps track of path length
+pathlen = 0
+
 #Initializing pygame screen
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -162,6 +165,8 @@ class Node:
 # a star forward
 def adaptiveA(grid, start, end):
     global expanded
+    global pathlen
+
     closed = []
 
     open = heap()
@@ -185,6 +190,7 @@ def adaptiveA(grid, start, end):
             while current_node != start_node:
                 path.append(current_node.position)
                 grid[current_node.position[0]][current_node.position[1]] = 4
+                pathlen = pathlen + 1
                 current_node = current_node.parent
             # Return reversed path
             return path[::-1]
@@ -225,6 +231,7 @@ def adaptiveA(grid, start, end):
 # backwardA
 def backwardA(grid, start, end):
     global expanded
+    global pathlen
     closed = []
 
     open = heap()
@@ -247,6 +254,7 @@ def backwardA(grid, start, end):
             while current_node != start_node:
                 path.append(current_node.position)
                 grid[current_node.position[0]][current_node.position[1]] = 4
+                pathlen = pathlen + 1
                 current_node = current_node.parent
             # Return reversed path
             return path[::-1]
@@ -287,6 +295,7 @@ def backwardA(grid, start, end):
 # forwardA_lagestG
 def forwardA_largestG(grid, start, end):
     global expanded
+    global pathlen
 
     closed = []
 
@@ -310,6 +319,7 @@ def forwardA_largestG(grid, start, end):
             while current_node != start_node:
                 path.append(current_node.position)
                 grid[current_node.position[0]][current_node.position[1]] = 4
+                pathlen = pathlen + 1
                 current_node = current_node.parent
             # Return reversed path
             return path[::-1]
@@ -350,6 +360,8 @@ def forwardA_largestG(grid, start, end):
 # forwardA_smallestG
 def forwardA_smallestG(grid, start, end):
     global expanded
+    global pathlen
+    
     closed = []
 
     open = heap()
@@ -372,6 +384,7 @@ def forwardA_smallestG(grid, start, end):
             while current_node != start_node:
                 path.append(current_node.position)
                 grid[current_node.position[0]][current_node.position[1]] = 4
+                pathlen = pathlen + 1
                 current_node = current_node.parent
             # Return reversed path
             return path[::-1]
@@ -491,6 +504,8 @@ def create_grid_solution(search_type, grid_arg):
     print("RESULT ***************************************")
     print("Expanded cells: ", end="")
     print(expanded)
+    print("Path Length: ", end="")
+    print(pathlen)
     # print(grid)
     drawGrid(grid)
 
