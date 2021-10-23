@@ -176,7 +176,6 @@ def adaptiveA(grid, start, end):
     open.insert(start_node)
 
     while open.currentSize > 0:
-        open.buildHeap(open.heapList) # organizes heap
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
