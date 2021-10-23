@@ -3,7 +3,6 @@ import random
 from pathlib import Path
 import pygame
 
-#proportions of pygame screen on computer in pixels
 WIDTH, HEIGHT = 508, 508
 CELL_SIZE = 5
 ROWS, COLUMNS = int(HEIGHT / CELL_SIZE), int(WIDTH / CELL_SIZE)
