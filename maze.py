@@ -84,7 +84,7 @@ def DFS(row, col, grid):
             adjy = col + dCol[i]
             st.append([adjx, adjy])
 
-class heap:
+class heap: # Creates heap and uses f-value
     def __init__(self):
         self.heapList = [0]
         self.currentSize = 0
@@ -177,56 +177,51 @@ def adaptiveA(grid, start, end):
     open.insert(start_node)
 
     while open.currentSize > 0:
-        # open.buildHeap(open.heapList)
+        open.buildHeap(open.heapList) # organizes heap
         current_node = open.delMin() #gets the minimum and deletes it from the heap
         while(current_node == 0):
             current_node = open.delMin() #deletes min again because heap is automatically created with 0
-            # print(current_node.h)
-            # print(current_node)
         closed.append(current_node)
 
-        if current_node == goal_node:
-            path = []
+        if current_node == goal_node: # We reached the goal
             while current_node != start_node:
-                path.append(current_node.position)
                 grid[current_node.position[0]][current_node.position[1]] = 4
                 pathlen = pathlen + 1
                 current_node = current_node.parent
-            # Return reversed path
-            return path[::-1]
+            # Return because we are done
+            return
         
         (x, y) = current_node.position
         # Get neighbors
         neighbors = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
 
-        for next in neighbors:
-            if((0 <= next[0] < 101) & (0 <= next[1] < 101)):
+        for next in neighbors: #checks all possible neighbors
+            if((0 <= next[0] < 101) & (0 <= next[1] < 101)): # points must be in range of 0 to 100
                 map_value = grid[next[0]][next[1]]
-            else:
+            else: # if not in range, continue to next iteration
                 continue
             # Get value from map
             # Check if the node is a wall
             if(map_value == 1):
                 continue
 
-            grid[next[0]][next[1]] = 5
+            grid[next[0]][next[1]] = 5 # Changes to gray to show that we have expanded the cell
             expanded = expanded + 1
-            # Create a neighbor node
+            # Create a neighbor node and sets our current as the parent
             neighbor = Node(next, current_node)
             # Check if the neighbor is in the closed list
             if(neighbor in closed):
                 continue
             goal =  goal_node.position[0] + goal_node.position[1]
-            # h = abs(neighbor.position[0] - goal_node.position[0]) + abs(neighbor.position[1] - goal_node.position[1])
             neighbor.g = current_node.g + 1
             neighbor.h = goal - (abs(neighbor.position[0] - start_node.position[0]) + abs(neighbor.position[1] - start_node.position[1]))
             neighbor.f = neighbor.g + neighbor.h
-            # Check if neighbor is in open list and if it has a lower f value
+            # Check if neighbor is in open lists 
             if(add_to_open(open, neighbor, current_node) == True):
-                # Everything is green, add neighbor to open list
+                # we insert to heap
                 open.insert(neighbor)    
     
-    return []
+    return [] # If no path is found return nothing
 
 # backwardA
 def backwardA(grid, start, end):
